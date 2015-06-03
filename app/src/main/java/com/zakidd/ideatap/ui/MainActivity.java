@@ -2,59 +2,66 @@ package com.zakidd.ideatap.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
 import com.zakidd.ideatap.R;
+
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnItemClick;
-import butterknife.OnTextChanged;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    Firebase fireRef;
+    private GoogleApiClient googleApiClient;
 
     @InjectView(R.id.googleLoginButton) Button loginButton;
-    @InjectView(R.id.testData) EditText testData;
-    @InjectView(R.id.testDataView) TextView testDataView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.setAndroidContext(this);
-
-        fireRef = new Firebase("https://idea-tap.firebaseio.com/");
-
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-    }
 
-    @OnItemClick(R.id.googleLoginButton)
-    public void loginWithGoogle(int positionOfClick) {
-        fireRef.authWithOAuthToken("google", "", new Firebase.AuthResultHandler() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .build();
+
+        final Firebase fb = new Firebase("https://idea-tap.firebaseio.com");
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAuthenticated(AuthData authData) {
-
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-
+            public void onClick(View v) {
+                googleApiClient.connect();
             }
         });
     }
 
-    @OnTextChanged(R.id.testData)
-    public void testDataChanged(CharSequence changedText) {
-        fireRef.child("test_data").setValue(changedText);
+    @Override
+    public void onConnected(Bundle bundle) {
+
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }
