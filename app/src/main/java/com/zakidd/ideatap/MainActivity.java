@@ -10,6 +10,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.zakidd.ideatap.auth.GoogleOAuthActivity;
 import com.zakidd.ideatap.auth.TwitterOAuthActivity;
 
 import java.util.HashMap;
@@ -25,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     final protected int TWITTER_SIGN_IN = 2;
     final protected int GOOGLE_SIGN_IN = 3;
 
-    private GoogleApiClient googleApiClient;
     private Firebase firebase;
 
     @InjectView(R.id.googleLoginButton) SignInButton googleLoginButton;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.googleLoginButton)
     public void authWithGoogle() {
-
+        startActivityForResult(new Intent(this, GoogleOAuthActivity.class), GOOGLE_SIGN_IN);
     }
 
     @OnClick(R.id.twitterLoginButton)

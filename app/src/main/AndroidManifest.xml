@@ -25,6 +25,7 @@
         </activity>
 
         <activity android:name=".auth.TwitterOAuthActivity" />
+        <activity android:name=".auth.GoogleOAuthActivity" />
     </application>
 
 </manifest>
