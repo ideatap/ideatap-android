@@ -16,6 +16,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,20 +34,15 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         firebase = new Firebase("https://idea-tap.firebaseio.com");
-
-        twitterLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                authWithTwitter();
-            }
-        });
     }
 
+    @OnClick(R.id.googleLoginButton)
     private void authWithGoogle() {
 
     }
 
-    private void authWithTwitter() {
+    @OnClick(R.id.twitterLoginButton)
+    public void authWithTwitter() {
         startActivityForResult(new Intent(this, TwitterOAuthActivity.class), 2);
     }
 
@@ -60,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
                 newUser.put("provider_id", authData.getProviderData().get("id").toString());
                 newUser.put("username", authData.getProviderData().get("username").toString());
                 newUser.put("name", authData.getProviderData().get("displayName").toString());
-                System.out.println();
 //                newUser.put("image", );
 
                 firebase.child("users").child(authData.getUid()).setValue(newUser);
