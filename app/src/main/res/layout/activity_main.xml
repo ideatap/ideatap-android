@@ -27,7 +27,7 @@
             android:id="@+id/twitterLoginButton"
             android:layout_gravity="center_horizontal" />
 
-        <Button
+        <com.google.android.gms.common.SignInButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login with Google+"

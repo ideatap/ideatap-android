@@ -3,13 +3,13 @@ package com.zakidd.ideatap;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.zakidd.ideatap.auth.TwitterOAuthActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +20,9 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    final protected int TWITTER_SIGN_IN = 2;
+    final protected int GOOGLE_SIGN_IN = 3;
 
     private GoogleApiClient googleApiClient;
     private Firebase firebase;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.twitterLoginButton)
     public void authWithTwitter() {
-        startActivityForResult(new Intent(this, TwitterOAuthActivity.class), 2);
+        startActivityForResult(new Intent(this, TwitterOAuthActivity.class), TWITTER_SIGN_IN);
     }
 
     private void firebaseAuth(final String provider, Map<String, String> options) {
@@ -72,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Map<String, String> options = new HashMap<String, String>();
-        if(requestCode == 2) {
+
+        if (requestCode == TWITTER_SIGN_IN) {
             options.put("oauth_token", data.getStringExtra("oauth_token"));
             options.put("oauth_token_secret", data.getStringExtra("oauth_token_secret"));
             options.put("user_id", data.getStringExtra("user_id"));

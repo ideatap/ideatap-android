@@ -1,4 +1,4 @@
-package com.zakidd.ideatap;
+package com.zakidd.ideatap.auth;
 
 import android.app.Activity;
 import android.content.Intent;
