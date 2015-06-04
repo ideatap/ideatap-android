@@ -8,6 +8,7 @@ import android.widget.Button;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.zakidd.ideatap.auth.TwitterOAuthActivity;
 
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleApiClient googleApiClient;
     private Firebase firebase;
 
-    @InjectView(R.id.googleLoginButton) Button googleLoginButton;
+    @InjectView(R.id.googleLoginButton) SignInButton googleLoginButton;
     @InjectView(R.id.twitterLoginButton) Button twitterLoginButton;
 
     @Override
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.googleLoginButton)
-    private void authWithGoogle() {
+    public void authWithGoogle() {
 
     }
 
