@@ -3,6 +3,7 @@ package com.zakidd.ideatap;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 
 import com.firebase.client.AuthData;
@@ -78,12 +79,19 @@ public class MainActivity extends AppCompatActivity {
         Map<String, String> options = new HashMap<String, String>();
 
         if (requestCode == TWITTER_SIGN_IN) {
-            options.put("oauth_token", data.getStringExtra("oauth_token"));
-            options.put("oauth_token_secret", data.getStringExtra("oauth_token_secret"));
-            options.put("user_id", data.getStringExtra("user_id"));
-            firebaseAuth("twitter", options);
-            AuthData authData = firebase.getAuth();
-            System.out.println(authData);
+            try {
+                options.put("oauth_token", data.getStringExtra("oauth_token"));
+                options.put("oauth_token_secret", data.getStringExtra("oauth_token_secret"));
+                options.put("user_id", data.getStringExtra("user_id"));
+
+                firebaseAuth("twitter", options);
+
+                AuthData authData = firebase.getAuth();
+            } catch(NullPointerException e) {
+                // TODO: Abstract getResources().getString(R.string.log_label to a separate Util
+                // library for logging.
+                Log.i(getResources().getString(R.string.log_label), "User backed out of Twitter Login");
+            }
         }
     }
 }
