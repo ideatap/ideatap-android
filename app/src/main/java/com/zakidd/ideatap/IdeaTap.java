@@ -1,4 +1,4 @@
-package com.zakidd.ideatap.ui;
+package com.zakidd.ideatap;
 
 import android.app.Application;
 
