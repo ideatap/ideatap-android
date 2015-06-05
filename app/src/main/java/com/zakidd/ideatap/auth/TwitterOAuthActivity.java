@@ -73,9 +73,10 @@ public class TwitterOAuthActivity extends Activity {
             @Override
             protected AccessToken doInBackground(Void... params) {
                 AccessToken accessToken = null;
+
                 try {
                     accessToken = mTwitter.getOAuthAccessToken(requestToken, oauthVerifier);
-                }catch(TwitterException e) {
+                } catch(TwitterException e) {
                     Log.e("TAG", e.toString());
                 }
 
@@ -88,7 +89,7 @@ public class TwitterOAuthActivity extends Activity {
                 resultIntent.putExtra("oauth_token", accessToken.getToken());
                 resultIntent.putExtra("oauth_token_secret", accessToken.getTokenSecret());
                 resultIntent.putExtra("user_id", accessToken.getUserId() + "");
-                setResult(2, resultIntent);
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         }.execute();

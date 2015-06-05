@@ -2,15 +2,23 @@ package com.zakidd.ideatap.auth;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+
+import java.io.IOException;
 
 
 public class GoogleOAuthActivity extends Activity implements
@@ -34,6 +42,7 @@ public class GoogleOAuthActivity extends Activity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(new Scope("email"))
                 .build();
 
         mGoogleApiAvailability = GoogleApiAvailability.getInstance();
@@ -41,7 +50,37 @@ public class GoogleOAuthActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.e("IdeaTap", "CONNECTED");
+        final Context context = this.getApplicationContext();
+        final String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+        new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected String doInBackground(Void... params) {
+                String oauthToken = null;
+
+                try {
+                    oauthToken = GoogleAuthUtil.getToken(context, accountName,
+                            "oauth2:email " + Plus.SCOPE_PLUS_LOGIN);
+                } catch (IOException | GoogleAuthException e) {
+                    e.printStackTrace();
+                }
+
+                if (oauthToken == null) {
+                    this.cancel(true);
+                }
+
+                return oauthToken;
+            }
+
+            @Override
+            protected void onPostExecute(String oauthToken) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("oauth_token", oauthToken);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+            }
+        }.execute();
     }
 
     /**
@@ -53,6 +92,8 @@ public class GoogleOAuthActivity extends Activity implements
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
+        Log.e("IdeaTap", "COnnection Error: " + result.hasResolution());
+        Log.e("IdeaTap", "Connection Error #: " + result.getErrorCode());
         if (result.hasResolution()) {
             if (!mIntentInProgress) {
                 try {
@@ -65,8 +106,6 @@ public class GoogleOAuthActivity extends Activity implements
             }
         }
         else {
-            // Even if the connection failed is a success and has a resolution this will still return
-            // some form of int.  Generally 0 if successful.
             final int error_code = result.getErrorCode();
 
             switch (error_code) {
