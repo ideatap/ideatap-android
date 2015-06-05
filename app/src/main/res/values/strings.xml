@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Idea Tap</string>
 
-    <string name="log_label">IdeaTap:</string>
+    <string name="log_label">IdeaTap</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

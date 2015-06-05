@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 
@@ -16,7 +17,10 @@ public class GoogleOAuthActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_SIGN_IN = 0;
+    private static final int RC_FIX_CONNECTION_ERROR = 1;
+
     private GoogleApiClient mGoogleApiClient;
+    private GoogleApiAvailability mGoogleApiAvailability;
 
     /** Flag used to tell if we have an intent in progress.  Used onConnectionFailed */
     private boolean mIntentInProgress;
@@ -26,18 +30,18 @@ public class GoogleOAuthActivity extends Activity implements
         super.onCreate(savedInstanceState);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(Plus.API)
-            .addScope(Plus.SCOPE_PLUS_LOGIN)
-            .build();
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .build();
 
-        connectIfNotConnecting();
+        mGoogleApiAvailability = GoogleApiAvailability.getInstance();
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.e("IdeaTap: ", "CONNECTED");
+        Log.e("IdeaTap", "CONNECTED");
     }
 
     /**
@@ -45,18 +49,32 @@ public class GoogleOAuthActivity extends Activity implements
      * here.  We are passed a ConnectionResult instance so we can attempt to fix the issue
      * by calling the ConnectionResult's intent sender resolution, if it has one.
      *
-     * @param result
+     * @param result - Result from attempting to connect to Google Play Services.
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        if (!mIntentInProgress && result.hasResolution()) {
-            try {
-                mIntentInProgress = true;
-                startIntentSenderForResult(result.getResolution().getIntentSender(), RC_SIGN_IN,
-                        null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                mIntentInProgress = false;
-                mGoogleApiClient.connect();
+        if (result.hasResolution()) {
+            if (!mIntentInProgress) {
+                try {
+                    mIntentInProgress = true;
+                    result.startResolutionForResult(this, RC_SIGN_IN);
+                } catch (IntentSender.SendIntentException e) {
+                    mIntentInProgress = false;
+                    mGoogleApiClient.connect();
+                }
+            }
+        }
+        else {
+            // Even if the connection failed is a success and has a resolution this will still return
+            // some form of int.  Generally 0 if successful.
+            final int error_code = result.getErrorCode();
+
+            switch (error_code) {
+                case ConnectionResult.SERVICE_MISSING:
+                case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                case ConnectionResult.SERVICE_DISABLED:
+                    mGoogleApiAvailability.getErrorDialog(this, error_code, RC_FIX_CONNECTION_ERROR);
+                    break;
             }
         }
     }
@@ -96,7 +114,7 @@ public class GoogleOAuthActivity extends Activity implements
     }
 
     private void disconnectIfConnected() {
-        if (!mGoogleApiClient.isConnecting()) {
+        if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
     }
