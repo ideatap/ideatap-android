@@ -1,4 +1,4 @@
-package com.zakidd.ideatap;
+package com.zakidd.ideatap.auth;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,9 +17,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
-/**
- * Created by g33kidd on 6/3/15.
- */
+
 public class TwitterOAuthActivity extends Activity {
 
     private WebView mTwitterView;
