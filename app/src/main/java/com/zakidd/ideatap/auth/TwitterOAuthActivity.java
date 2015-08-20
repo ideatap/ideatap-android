@@ -28,8 +28,8 @@ public class TwitterOAuthActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         mTwitter = new TwitterFactory(new ConfigurationBuilder()
-                .setOAuthConsumerKey("wMtuQIoT7PCA5RSSDmjw3nnBu")
-                .setOAuthConsumerSecret("X0Hme8DgJXcWhLF9ccEoKQNf4uJasiB6Jjj114398KpiURVEUt")
+                .setOAuthConsumerKey("TcRhcqD57UYCyfWupo6ezdTAs")
+                .setOAuthConsumerSecret("TdulHGOHLcXgIgW29QbVs4cfREVbXC3tQWGKgN9hUDMnXyTcAA")
                 .build()).getInstance();
         mTwitterView = new WebView(this);
         mTwitterView.getSettings().setJavaScriptEnabled(true);

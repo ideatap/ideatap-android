@@ -1,4 +1,4 @@
-package com.zakidd.ideatap;
+package com.zakidd.ideatap.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.zakidd.ideatap.R;
 import com.zakidd.ideatap.auth.GoogleOAuthActivity;
 import com.zakidd.ideatap.auth.TwitterOAuthActivity;
 
@@ -22,7 +23,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     final protected int TWITTER_SIGN_IN = 2;
     final protected int GOOGLE_SIGN_IN = 3;
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 newUser.put("username", authData.getProviderData().get("username").toString());
                 newUser.put("name", authData.getProviderData().get("displayName").toString());
 //                newUser.put("image", );
-
                 firebase.child("users").child(authData.getUid()).setValue(newUser);
             }
 
